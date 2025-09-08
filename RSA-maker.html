@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>RSA暗号化復号化システム</title>
+        <style>
+            #div1{
+                display: flex;
+            }
+            #go{
+                margin-left: 10px;
+            }
+            #urusaiyatu{
+                font-size: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            function getstat(n1){
+                let n = document.getElementById(n1);
+                return n.value;
+            }
+            function ansplus(text){
+                let ans = document.getElementById("ans");
+                ans.innerHTML += text + "</br>";
+            }
+            function GCD(a1,b1){
+                let a,b;
+                if(a1 >= b1){
+                    a = a1;
+                    b = b1;
+                }
+                else{
+                    a = b1;
+                    b = a1;
+                }
+                //処理
+                if((a % b) == 0){
+                    return b;
+                }
+                else{
+                    return (GCD(b,(a % b)));
+                }
+            }
+            function go(){
+                const p = getstat("p");
+                const q = getstat("q");
+                let end;
+                let now = 0;
+                if(getstat("type") == 1){
+                    end = 1;
+                }
+                else if(getstat("type") == 3){
+                    end = getstat("loc");
+                }
+                else{
+                    //ここの+50をいじるとセキュリティが変わります
+                    end = Math.floor(Math.random() * 15) + 50;
+                }
+                let e = 1;
+                const _3 = (p - 1) * (q - 1);
+                while(now < end){
+                    e++;
+                    if(GCD(_3,e) == 1){
+                        now++;
+                    }
+                }
+                now = 0;
+                e = BigInt(e);
+                let d = 1n;
+                if(getstat("type") == 1){
+                    end = 1;
+                }
+                else if(getstat("type") == 3){
+                    end = getstat("loc");
+                }
+                else{
+                    //ここの+50をいじるとセキュリティが変わります
+                    end = Math.floor(Math.random() * 15) + 50;
+                }
+                let a = BigInt((p - 1) * (q - 1));
+                while(now < end){
+                    d += 1n;
+                    if((e * d)% a == 1){
+                        now++;
+                    }
+                }
+                const n = BigInt(p * q);
+                ansplus("結果:公開鍵n=" + n + "公開鍵e=" + e + ",秘密鍵d=" + d);
+            }
+        </script>
+        <h1>RSA暗号化復号化システム</h1>
+        <select id="type">
+            <option value="1">速度重視(1つ目のe,dを使います)</option>
+            <option value="2">セキュリティ重視(乱数で指定したところのe,dを使います)</option>
+            <option value="3">任意の位置を利用(セキュリティは数値による)</option>
+        </select>
+        <p>位置(任意の位置を利用するとした人のみ、自然数で)</p>
+        <input type="number" id="loc"></input>
+        <p>素数p</p>
+        <input type="number" id="p"></input>
+        <div id="div1"></div>
+        <p>素数q</p>
+        <input type="number" id="q"></input>
+        <button id="go" onclick="go()">変換実行</button>
+        </div>
+        <h2>結果↓</h2>
+        <p id="ans"></p>
+        <p>完全に巨大数対応してます。</p><p id="urusaiyatu">すごいでしょ？(圧)昨日帰ってからずっとこの3作作ってたんだよ？だからその分これで遊んでね？</p>
+        <p hidden="true">©Kanaki,2025/09/08</p>
+    </body>
+</html>

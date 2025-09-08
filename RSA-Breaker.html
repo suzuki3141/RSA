@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>RSA暗号解読機構</title>
+        <style>
+            #div1{
+                display: flex;
+            }
+            #go{
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            function get(n1){
+    let n = n1;
+    let sosu = [];
+    let hit = [];
+    for(let i = 2;i <= (n / 2);i++){
+        for(let j = 2;j <= (n / 2);j++){
+            if((i * j) == n){
+                if(sosu.includes(i)){
+                    //j処理
+                    if(sosu.includes(j)){
+                        hit.push([i,j]);
+                    }
+                    else{
+                        if(issosu(j)){
+                            sosu.push(j);
+                            hit.push([i,j]);
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    //j\\
+                }
+                else{
+                    if(issosu(i)){
+                        sosu.push(i);
+                        //j処理
+                        if(sosu.includes(j)){
+                            hit.push([i,j]);
+                        }
+                        else{
+                            if(issosu(j)){
+                                sosu.push(j);
+                                hit.push([i,j]);
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                        //j\\
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return hit;
+}
+function issosu(n1){
+    let n = n1;
+    let ret = true;
+    for(let i = 2;i < n;i++){
+        if(n % i == 0){
+            ret = false;
+            break;
+        }
+    }
+    return ret;
+}
+function getstat(n1){
+    let n = document.getElementById(n1);
+    return n.value;
+}
+function ansplus(text){
+    ans.innerHTML += text + "</br>";
+}
+function go(){
+    document.getElementById("ans").innerHTML = "";
+    let type = getstat("type");
+    let hit = get(getstat("n"));
+    if(hit == 0){
+        hit = undefined;
+    }
+    ansplus("途中経過1-ヒットしたpとqの組:" + hit);
+    let max = getstat("max");
+    let d = [];
+    if(hit == 0){
+        ansplus("pとqがヒットしませんでした。該当なし");
+    }
+    else{
+        for(let i = 0;i < hit.length;i++){
+            let a = (hit[i][0] - 1);
+            let b = (hit[i][1] - 1);
+            let pt = a * b;
+            let e = getstat("e");
+            for(let j = 1;j <= max;j++){
+                if((e * j > pt) && ((e * j) % pt == 1)){
+                    if(!(d.includes(j))){
+                        d.push(j);
+                    }
+                }
+            }
+        }
+        ansplus("ヒットした秘密鍵d↓</br>" + d);
+    }
+    if(type == "Donly"){
+        ansplus("秘密鍵の特定のみの指定のためこれで終了します。")
+    }
+    else{
+        let fukugo = [];
+        let ango = getstat("ango");
+        for(let i = 0;i < d.length;i++){
+            const a = BigInt(ango);
+            const b = BigInt(d[i]);
+            const c = BigInt(getstat("n"));
+            fukugo.push(a ** b % c);
+        }
+        ansplus("復号結果↓</br>" + fukugo);
+    }
+}
+        </script>
+        <h1>RSA暗号解読機構</h1>
+        <select id="type">
+            <option value="Donly">秘密鍵の総当たりのみ行う</option>
+            <option value="Rplus">復号の総当たりまで行う</option>
+        </select>
+        <p>暗号文(復号の総当たりまで行う場合のみ入力)</p>
+        <input type="number" id="ango"></input>
+        <p>d(秘密鍵)の総当たり最大値</p>
+        <input type="number" id="max"></input>
+        <p>公開鍵n(剰余計算に使う公開鍵):</p>
+        <input type="number" id="n"></input>
+        <p>公開鍵e(サブ公開鍵):</p>
+        <div id="div1"></div>
+        <input type="number" id="e"></input>
+        <button id="go" onclick="go()">解読実行</button>
+        </div>
+        <h2>結果↓</h2>
+        <p id="ans"></p>
+        <p>☆注意点 悪用しないでください。楽しむ範囲でどうぞ。</br>
+        また、復号の部分ではBigInt型を使っているので計算は問題なくいきますが、ほかの部分では変数の問題上巨大数になるとバグります。</p>
+        <p hidden="true">©Kanaki,2025/09/08</p>
+    </body>
+</html>

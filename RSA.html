@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>RSA暗号化復号化システム</title>
+        <style>
+            #div1{
+                display: flex;
+            }
+            #go{
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            function getstat(n1){
+                let n = document.getElementById(n1);
+                return n.value;
+            }
+            function ansplus(text){
+                let ans = document.getElementById("ans");
+                ans.innerHTML += text + "</br>";
+            }
+            function go(){
+                document.getElementById("ans").innerHTML = "";
+                const ango = BigInt(getstat("ango"));
+                const d = BigInt(getstat("d"));
+                const e = BigInt(getstat("e"));
+                const n = BigInt(getstat("n"));
+                if(getstat("type") == 1){
+                    if(ango < n){
+                        ansplus("暗号後の文:" + ((ango ** e) % n));
+                    }
+                    else{
+                        ansplus("!Error_平文が公開鍵n以上です!");
+                    }
+                }
+                else{
+                    ansplus("復号後の文:" + ((ango ** d) % n));
+                }
+            }
+        </script>
+        <h1>RSA暗号化復号化システム</h1>
+        <select id="type">
+            <option value="1">暗号化</option>
+            <option value="2">復号化</option>
+        </select>
+        <p>文</p>
+        <input type="number" id="ango"></input>
+        <p>秘密鍵d(復号化計算時に入力)</p>
+        <input type="number" id="d"></input>
+        <p>公開鍵e(暗号化計算時に入力)</p>
+        <input type="number" id="e"></input>
+        <p>公開鍵n(入力必須)</p>
+        <div id="div1"></div>
+        <input type="number" id="n"></input>
+        <button id="go" onclick="go()">変換実行</button>
+        </div>
+        <h2>結果↓</h2>
+        <p id="ans"></p>
+        <p>☆注意点 先に自力でnやeは求めてね。完全に巨大数対応してます。</p>
+        <p hidden="true">©Kanaki,2025/09/08</p>
+    </body>
+</html>
